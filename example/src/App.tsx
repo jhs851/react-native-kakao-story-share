@@ -1,17 +1,25 @@
 import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import KakaoStoryShare from 'react-native-kakao-story-share';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
-  React.useEffect(() => {
-    KakaoStoryShare.multiply(3, 7).then(setResult);
-  }, []);
+  const share = () => {
+    KakaoStoryShare.post({
+      title: 'title',
+      url: 'https://apps.apple.com/kr/app/%EC%B9%A0%ED%85%90/id1498707344',
+      desc: 'description',
+    })
+      .then(() => {
+        console.log('resolve');
+      })
+      .catch((error) => console.log(error));
+  };
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <TouchableOpacity onPress={share}>
+        <Text>Kakao Story Share</Text>
+      </TouchableOpacity>
     </View>
   );
 }

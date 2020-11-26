@@ -1,7 +1,14 @@
 import { NativeModules } from 'react-native';
 
+export type KakaoStoryShareOptions = {
+  title: string;
+  url: string;
+  desc?: string;
+  imageURLs?: string[];
+};
+
 type KakaoStoryShareType = {
-  multiply(a: number, b: number): Promise<number>;
+  post(options: KakaoStoryShareOptions): Promise<void>;
 };
 
 const { KakaoStoryShare } = NativeModules;
