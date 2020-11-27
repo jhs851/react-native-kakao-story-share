@@ -1,10 +1,11 @@
 import { NativeModules } from 'react-native';
 
 export type KakaoStoryShareOptions = {
+  appName: string;
   title: string;
   url: string;
   desc?: string;
-  imageURLs?: string[];
+  imageURL?: string;
 };
 
 type KakaoStoryShareType = {

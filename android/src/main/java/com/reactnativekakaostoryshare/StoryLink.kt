@@ -53,6 +53,7 @@ internal class StoryLink private constructor(private val context: Context) {
 
     if (this.isAvailableIntent) {
       params = baseStoryLinkUrl
+      appendParam("post", url)
       appendParam("appid", appId)
       appendParam("appver", appVer)
       appendParam("apiver", storyLinkApiVersion)

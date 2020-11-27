@@ -14,7 +14,18 @@ npm install react-native-kakao-story-share
 
 ## React Native Link
 
-링크가 필요하지 않습니다.
+### RN >= 0.60
+
+```sh
+npx pod-install
+```
+
+### RN <= 0.59
+react-native link 를 이용하시면 빠른 설치가 가능합니다. 
+
+```sh
+react-native link react-native-kakao-story-share
+```
 
 ## Usage
 
@@ -24,6 +35,7 @@ import KakaoStoryShare from "react-native-kakao-story-share";
 // ...
 
 KakaoStoryShare.post({
+  appName: '카카오 스토리 공유',
   title: '(광해) 실제 역사적 진실은?',
   url: 'http://star.ohmynews.com/NWS_Web/OhmyStar/at_pg.aspx?CNTN_CD=A0001779183',
   desc: '(광해 왕이 된 남자)의 역사성 부족을 논하다.',
@@ -35,6 +47,7 @@ KakaoStoryShare.post({
 
 ```ts
 type KakaoStoryShareOptions = {
+  appName: string;
   title: string;
   url: string;
   desc?: string;

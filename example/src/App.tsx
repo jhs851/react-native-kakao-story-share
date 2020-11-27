@@ -5,6 +5,7 @@ import KakaoStoryShare from 'react-native-kakao-story-share';
 export default function App() {
   const share = () => {
     KakaoStoryShare.post({
+      appName: '카카오 스토리 공유',
       title: 'title',
       url: 'https://apps.apple.com/kr/app/%EC%B9%A0%ED%85%90/id1498707344',
       desc: 'description',

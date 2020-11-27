@@ -15,13 +15,14 @@ class KakaoStoryShareModule(reactContext: ReactApplicationContext) : ReactContex
   fun post(options: ReadableMap, promise: Promise) {
     val storyLink: StoryLink = StoryLink.getLink(this.reactApplicationContext)
     val urlInfoAndroid: MutableMap<String, Any> = Hashtable(1)
+    val appName = options.getString("appName") ?: ""
     val title = options.getString("title") ?: ""
     val url = options.getString("url") ?: ""
     val desc = if (options.hasKey("desc")) options.getString("desc") ?: "" else ""
-    val imageurl = if (options.hasKey("imageURLs")) options.getArray("imageURLs") else null
+    val imageurl = if (options.hasKey("imageURL")) arrayOf(options.getString("imageURL")) else null
 
     try {
-      require(!(storyLink.isEmptyString(url) || storyLink.isEmptyString(title)))
+      require(!(storyLink.isEmptyString(appName) || storyLink.isEmptyString(url) || storyLink.isEmptyString(title)))
     } catch (e: Exception) {
       promise.reject("Title and url are required values.", e.message)
     }
@@ -41,12 +42,12 @@ class KakaoStoryShareModule(reactContext: ReactApplicationContext) : ReactContex
           url,
           this.reactApplicationContext.packageName,
           "1.0",
-          this.reactApplicationContext.applicationInfo.name,
+          appName,
           "UTF-8",
           urlInfoAndroid)
       }
 
-      promise.resolve(null)
+       promise.resolve(null)
     } catch (e: Exception) {
       promise.reject("KAKAO_API", e.message)
     }

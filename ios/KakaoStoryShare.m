@@ -3,6 +3,7 @@
 
 NSString *const StoryLinkApiVersion = @"1.0";
 NSString *const StoryLinkURLBaseString = @"storylink://posting";
+NSString *const WebStoryLinkURLBaseString = @"https://story.kakao.com/s/share";
 
 NSString* convertJSONString(id object) {
     NSError *error = nil;
@@ -97,36 +98,63 @@ RCT_REMAP_METHOD(post,
                  withRejecter:(RCTPromiseRejectBlock)reject)
 {
     if (![KakaoStoryShare canOpenStoryLink]) {
-        NSLog(@"Cannot open kakao story.");
-        return;
+        @try {
+            NSString *text = [NSString stringWithFormat:@"%@-%@", [options objectForKey:@"title"], [options objectForKey:@"desc"]];
+            NSString *webStoryLinkURLString = [
+                                            KakaoStoryShare makeWebStoryLinkWithPostingText:[options objectForKey:@"url"]
+                                            text:text];
+            
+            if ([KakaoStoryShare openStoryLinkWithURLString:webStoryLinkURLString]) {
+                return resolve(NULL);
+            } else {
+                return reject(@"Open web story link failed.", NULL, NULL);
+            }
+        } @catch (NSException * e) {
+            return reject(@"Failed posting.", e.reason, NULL);
+        }
     }
     
-    NSBundle *bundle = [NSBundle mainBundle];
-    ScrapInfo *scrapInfo = [[ScrapInfo alloc] init];
-    scrapInfo.title = [options objectForKey:@"title"];
-    scrapInfo.desc = [options objectForKey:@"desc"];
-    scrapInfo.imageURLs = [options objectForKey:@"imgURLs"];
-    scrapInfo.type = ScrapTypeVideo;
-    
     @try {
+        NSBundle *bundle = [NSBundle mainBundle];
+        ScrapInfo *scrapInfo = [[ScrapInfo alloc] init];
+        scrapInfo.title = [options objectForKey:@"title"];
+        scrapInfo.desc = [options objectForKey:@"desc"];
+        NSString *imageURL = [options objectForKey:@"imgURL"];
+        if (imageURL != NULL) {
+            scrapInfo.imageURLs = @[imageURL];
+        }
+        scrapInfo.type = ScrapTypeVideo;
+        
         NSString *storyLinkURLString = [
-                                        KakaoStoryShare makeStoryLinkWithPostingText:@"Sample Story Posting https://www.youtube.com/watch?v=XUX1jtTKkKs"
+                                        KakaoStoryShare makeStoryLinkWithPostingText:[options objectForKey:@"url"]
                                         appBundleID:[bundle bundleIdentifier]
                                         appVersion:[bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"]
-                                        appName:[bundle objectForInfoDictionaryKey:@"CFBundleName"]
+                                        appName:[options objectForKey:@"appName"]
                                         scrapInfo:scrapInfo];
+        
         if ([KakaoStoryShare openStoryLinkWithURLString:storyLinkURLString]) {
             resolve(NULL);
         } else {
-            reject(@"Check URL Scheme", NULL, NULL);
+            reject(@"Open story link app failed.", NULL, NULL);
         }
     } @catch (NSException * e) {
-        reject(@"failed posting", e.reason, NULL);
+        reject(@"Failed posting.", e.reason, NULL);
     }
 }
 
 + (BOOL)canOpenStoryLink {
     return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:StoryLinkURLBaseString]];
+}
+
++ (NSString *)makeWebStoryLinkWithPostingText:(NSString *)url
+                                         text:(NSString *)text {
+    if (!url || !text) {
+        return nil;
+    }
+    
+    NSMutableDictionary *parameters = [@{ @"url": url, @"text": text } mutableCopy];
+    NSString *parameterString = HTTPArgumentsStringForParameters(parameters);
+    return [NSString stringWithFormat:@"%@?%@", WebStoryLinkURLBaseString, parameterString];
 }
 
 + (NSString *)makeStoryLinkWithPostingText:(NSString *)postingText
