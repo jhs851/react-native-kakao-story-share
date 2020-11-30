@@ -119,7 +119,7 @@ RCT_REMAP_METHOD(post,
         ScrapInfo *scrapInfo = [[ScrapInfo alloc] init];
         scrapInfo.title = [options objectForKey:@"title"];
         scrapInfo.desc = [options objectForKey:@"desc"];
-        NSString *imageURL = [options objectForKey:@"imgURL"];
+        NSString *imageURL = [options objectForKey:@"imageURL"];
         if (imageURL != NULL) {
             scrapInfo.imageURLs = @[imageURL];
         }
