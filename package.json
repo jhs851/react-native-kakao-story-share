@@ -31,8 +31,12 @@
   },
   "keywords": [
     "react-native",
-    "ios",
-    "android"
+    "react-native-kakao",
+    "react-native-kakaotalk",
+    "react-native-kakao-story",
+    "kakao",
+    "kakaotalk",
+    "kakaostory"
   ],
   "repository": "https://github.com/jhs851/react-native-kakao-story-share",
   "author": "jhs851 <jhs851@naver.com> (https://github.com/jhs851)",
